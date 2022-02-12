@@ -14,7 +14,6 @@ const sectionObserver = new IntersectionObserver(entries => {
             })
             // toggle menu if visible
             e.target.id === 'solutions' ? menu.classList.add('active') : menu.classList.remove('active')
-            e.target.id === 'company' ? ctNav.classList.add('active') : ctNav.classList.remove('active')
         }
     })
 }, {

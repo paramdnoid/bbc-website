@@ -10,6 +10,7 @@ let timer;
 let panIsRunning = false;
 let activeIndex = 0;
 
+// align width to slides count
 slide.style.width = `${slides.length * 100}%`;
 
 hammer.on("pan", ($event) => {

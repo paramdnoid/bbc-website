@@ -6,11 +6,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="styles/style.css">
+
+    <template id="carousel-template">
+        <style>
+            .slider-outer-wrapper {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+
+            .slider-inner-wrapper {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .slider-inner-wrapper.is-animating {
+                transition: all 400ms;
+            }
+
+            .contentnav {
+                z-index: 2;
+                position: absolute;
+                bottom: 5px;
+                left: 50%;
+                transform: translate(-50%, 0);
+            }
+
+            .contentnav li {
+                width: 10px;
+                height: 10px;
+                background: var(--secondary);
+                border-radius: 50%;
+                margin: 20px 10px;
+                border: 2px solid var(--secondary);;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .contentnav li:hover, .contentnav li.selected {
+                background: none;
+                border-color: var(--accent);
+                transform: scale(2);
+            }
+        </style>
+        <div class="slider-outer-wrapper">
+            <h1>carousel</h1>
+            <div class="carouselName">name of carousel</div>
+            <div>
+                <div class="carret carret-left"></div>
+                <slot name="carousel-slides" class="slider-inner-wrapper"></slot>
+                <div class="carret carret-right"></div>
+            </div>
+        </div>
+    </template>
+
+    <script type="application/javascript">
+    console.log('init script')
+
+    function increaseCountOf() {
+        const element = document.querySelector('[carousel-name=company]');
+        console.log('increase count of', element)
+        element.setAttribute('carousel-counter', Number(element.getAttribute('carousel-counter')) + 1);
+    }
+
+    customElements.define('biting-bit-carousel',
+        class extends HTMLElement {
+            activeSlideIndex = 0
+
+            constructor() {
+                super();
+                this.attachShadow({mode: 'open'});
+                const node = document.getElementById('carousel-template').content.cloneNode(true);
+                console.log('our component template', node)
+                this.shadowRoot.appendChild(node);
+                this.renderName('my carousel name')
+                console.log('current carousel slides', document.querySelectorAll('biting-bit-carousel'))
+            }
+
+            connectedCallback() {
+                window.addEventListener('DOMContentLoaded', (event) => { // TODO replace with component specific live cycle event
+                    const slide = this.shadowRoot.querySelector('.slider-inner-wrapper');
+                    this.outer = this.shadowRoot.querySelector('.slider-outer-wrapper');
+
+                    this.slides = document.querySelectorAll(`biting-bit-carousel[carousel-name=${this.name}] .slide`)
+
+                    console.log('update slide width', slide)
+                    // align width to slides count
+                    slide.style.width = `${this.slides.length * 100}%`;
+                    this.setActiveSlide()
+                    this.generateBullets();
+                });
+            }
+
+            renderName() {
+                this.shadowRoot.querySelector('.carouselName').innerHTML = `${this.name} ${this.counter}`;
+            }
+
+            static get observedAttributes() {
+                return ['carousel-name', 'carousel-counter'];
+            }
+
+            attributeChangedCallback(name, oldValue, newValue) {
+                console.log('update attribute', name, oldValue, newValue)
+                if (name === 'carousel-name') {
+                    this.name = newValue
+                }
+                if (name === 'carousel-counter') {
+                    this.counter = newValue
+                }
+                this.renderName()
+            }
+
+            setActiveSlide() {
+                console.log('slides to filter', this.slides)
+                const ELEMENT = [...this.slides].find(e => {
+                    console.log('filter slide', e);
+                    return e.classList.contains('.active');
+                });
+                const RIGHT = this.shadowRoot.querySelector(".carret-right");
+                const LEFT = this.shadowRoot.querySelector(".carret-left");
+
+                if (ELEMENT) {
+                    ELEMENT.classList.remove("active");
+                }
+
+                this.slides[this.activeSlideIndex].classList.add("active");
+                this.activeSlideIndex === 0 ? LEFT.style.display = 'none' : LEFT.style.display = 'block';
+                this.activeSlideIndex >= this.slides.length - 1 ? RIGHT.style.display = 'none' : RIGHT.style.display = 'block';
+            };
+
+            generateBullets() {
+                const newNavigation = document.createElement("ul");
+                newNavigation.classList.add("contentnav");
+                this.slides.forEach((bullet, index) => {
+                    const newBullet = document.createElement("li");
+                    newBullet.dataset.active = index;
+                    if (index === this.activeSlideIndex) {
+                        newBullet.classList.add("selected");
+                    }
+                    newNavigation.appendChild(newBullet);
+                });
+                this.outer.appendChild(newNavigation);
+                //document.querySelectorAll(".contentnav > li").forEach((bullet) => {
+                //    bullet.addEventListener("click", bulletClick, false);
+                //});
+            };
+
+        });
+
+    </script>
 </head>
 <body class="bg-image">
 <nav>
     <ul class="navigation">
-        <li class="home selected"></li>
+        <li class="webcheck selected"></li>
+        <li class="home"></li>
         <li class="solutions"></li>
         <li class="company"></li>
         <li class="service"></li>
@@ -18,6 +171,38 @@
     </ul>
 </nav>
 <div class="container">
+    <section id="webcheck">
+        <button onclick="increaseCountOf('company')">+</button>
+        <biting-bit-carousel carousel-name="company" carousel-counter="0">
+            <div slot="carousel-slides" class="foo">
+                <div class="slide">
+                    <h1>Quiénes <span>somos</span></h1>
+                    <p class="lead justify">
+                        Somos una empresa tecnológica, formada por un gran equipo multidisciplinar y creativo, lleno de
+                        talento, compuesto de; ingenieros, programadores, expertos en negocio, marketing, diseño y UX.
+                        Nos une nuestra pasión y entusiasmo por la tecnología.
+                    </p>
+                </div>
+                <div class="slide">
+                    <h1>Nuestros <span>Valores</span></h1>
+                    <p class="lead justify">
+                        La Honestidad es nuestra premisa.
+                        Somos claros, honestos y transparentes. Creamos soluciones de software con código limpio y
+                        sencillo Queremos que nuestros clientes se sientan 100% independientes de nosotros tras la
+                        finalización del proyecto.
+                    </p>
+                </div>
+                <div class="slide">
+                    <h1>Nuestro <span>Misión</span></h1>
+                    <p class="lead justify">
+                        Nuestra misión es poner la tecnología al servicio de nuestros clientes. Creemos en la innovación
+                        tecnológica como instrumento para simplificar la vida de las personas, porque somos conscientes
+                        de que “No estamos en una época de cambios, sino cambio de época”. Te acompañamos en el camino.
+                    </p>
+                </div>
+            </div>
+        </biting-bit-carousel>
+    </section>
     <section id="home" class="uppercase">
         <img src="img/bitingbit-campus-white.svg" alt="logo"/>
         <h1>De la <span>Visión</span> al Producto</h1>
@@ -135,6 +320,9 @@
         </div>
     </section>
 </div>
+<script>
+console.log('load modules script')
+</script>
 <script type="module" src="/scripts/main.js"></script>
 </body>
 </html>

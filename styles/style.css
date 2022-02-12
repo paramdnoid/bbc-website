@@ -166,6 +166,10 @@ section h1 span, section p span {
     color: var(--accent);
 }
 
+.slider-outer-wrapper {
+    background-color: #F93900;
+}
+
 #company .slider-outer-wrapper {
     width: 100%;
     height: 100%;
