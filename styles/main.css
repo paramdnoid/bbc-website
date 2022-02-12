@@ -100,6 +100,14 @@ li:not(.address li) {
     font-size: 1.1rem;
 }
 
+.justify {
+    text-align: justify;
+}
+
+.max-w {
+    max-width: 300px;
+}
+
 @media (min-width: 576px) {
     .lead {
         font-size: 1.7rem;

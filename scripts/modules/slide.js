@@ -1,6 +1,7 @@
 const slidercontainer = document.querySelector(".slider-outer-wrapper");
 const slide = document.querySelector(".slider-inner-wrapper");
 const slides = document.querySelectorAll(".slide");
+const carrets = document.querySelectorAll(".carret");
 const hammer = new Hammer(slide);
 const slidersize = 100;
 const sensitivity = 15;
@@ -97,11 +98,30 @@ const animateSlider = (percentage) => {
 
 const setActiveSlide = (index) => {
     const ELEMENT = document.querySelector(".active");
+    const RIGHT = document.querySelector(".carret-right");
+    const LEFT = document.querySelector(".carret-left");
+
     if (ELEMENT) {
         ELEMENT.classList.remove("active");
     }
     slides[index].classList.add("active");
+    index === 0 ? LEFT.style.display = 'none' : LEFT.style.display = 'block';
+    index >= slides.length - 1 ? RIGHT.style.display = 'none' : RIGHT.style.display = 'block';
 };
+
+carrets.forEach( carret => {
+    carret.addEventListener('click', (e) => {
+        let aSlide = document.querySelector(".contentnav > .selected");
+
+        if(e.target.classList.contains('carret-left')) {
+            goToSlide(parseInt(aSlide.dataset.active) - 1)
+        }
+
+        if(e.target.classList.contains('carret-right')) {
+            goToSlide(parseInt(aSlide.dataset.active) + 1)
+        }
+    })
+})
 
 setActiveSlide(activeIndex);
 generateBullets(slides, slidercontainer);

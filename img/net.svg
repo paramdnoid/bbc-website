@@ -7,7 +7,8 @@
         viewBox="0 0 1443.0375 2634.9854"
         version="1.1"
         id="svg3119"
-        xmlns="http://www.w3.org/2000/svg">
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
     <defs
             id="defs3116">
         <linearGradient
@@ -84,7 +85,7 @@
         <g
                 id="85207"
                 transform="matrix(0.26458333,0,0,0.26458333,-1292.1899,-2100.0682)"
-                style="opacity:0.402287;fill:none;fill-rule:evenodd;stroke:none;stroke-width:0.2">
+                style="opacity:0.802287;fill:none;fill-rule:evenodd;stroke:none;stroke-width:1">
             <path
                     d="M 2842.3631,7520 H 2830 l 15.165,-64.1188 14.249,-28.8812 c 1.5027,0.5861 3.0294,1.0876 4.586,1.5166 L 2842.3631,7520"
                     id="Fill-7"
